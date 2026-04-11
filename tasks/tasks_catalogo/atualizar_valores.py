@@ -1,18 +1,22 @@
 import pandas as pd
-from prefect import task
+from prefect import task, get_run_logger
 
 
 # aplicando um tratamento para os valores das variáveis CONCENTRACAO, VOLUME e QUANTIDADE_APRESENTADA
 @task(name = "melhoria de valores para a variável apresentação")
 def melhorar_valores(dados: pd.DataFrame) -> pd.DataFrame:
-
-    # === Tranformando QUANTIDADE_APRESENTACAO em string ===
-    dados['QUANTIDADE_APRESENTACAO'] = dados['QUANTIDADE_APRESENTACAO'].astype(str)
-    
-    mask = dados['QUANTIDADE_APRESENTACAO'].notna()
-    dados.loc[mask, 'QUANTIDADE_APRESENTACAO'] = (
-        dados.loc[mask, 'QUANTIDADE_APRESENTACAO'].astype(str) + ' QTD_APR'
-    )
-    
-    return dados
+    logger = get_run_logger()
+    try:
+        # === Tranformando QUANTIDADE_APRESENTACAO em string ===
+        dados['QUANTIDADE_APRESENTACAO'] = dados['QUANTIDADE_APRESENTACAO'].astype(str)
+        
+        mask = dados['QUANTIDADE_APRESENTACAO'].notna()
+        dados.loc[mask, 'QUANTIDADE_APRESENTACAO'] = (
+            dados.loc[mask, 'QUANTIDADE_APRESENTACAO'].astype(str) + ' QTD_APR'
+        )
+        logger.success("Melhoria de valores para a variável apresentação concluída com sucesso")
+        return dados
+    except Exception as e:
+        logger.error(f"Erro ao melhorar valores: {e}")
+        raise e
 
