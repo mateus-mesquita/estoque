@@ -8,7 +8,6 @@ from prefect import task
 def flag(dados:pd.DataFrame, dados_estoque:pd.DataFrame) -> pd.DataFrame:
     try:
         dados['Estoque.qualif'] = dados['EAN'].isin(dados_estoque['EAN'])
-        logger.success("Classificação de produtos concluída com sucesso")
         return dados
     except Exception as e:
         logger.error(f"Erro ao classificar produtos: {e}")

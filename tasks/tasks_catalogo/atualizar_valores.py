@@ -14,7 +14,6 @@ def melhorar_valores(dados: pd.DataFrame) -> pd.DataFrame:
         dados.loc[mask, 'QUANTIDADE_APRESENTACAO'] = (
             dados.loc[mask, 'QUANTIDADE_APRESENTACAO'].astype(str) + ' QTD_APR'
         )
-        logger.success("Melhoria de valores para a variável apresentação concluída com sucesso")
         return dados
     except Exception as e:
         logger.error(f"Erro ao melhorar valores: {e}")

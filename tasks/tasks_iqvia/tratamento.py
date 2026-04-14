@@ -20,7 +20,6 @@ def tratar_dados_iqvia(dados: pd.DataFrame) -> pd.DataFrame:
                 )
 
                 dados[col] = pd.to_numeric(dados[col], errors='coerce')
-            logger.success("Tratamento de dados concluído com sucesso")
             return dados
     except Exception as e:
         logger.error(f"Erro ao tratar dados: {e}")

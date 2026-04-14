@@ -24,5 +24,7 @@ def media_trimestral(dados: pd.DataFrame) -> pd.DataFrame:
     dados['Media.Und TRI-202409'] = dados['Media.Und TRI-202409'].round(2)
     dados['Media.Und TRI-202412'] = dados['Media.Und TRI-202412'].round(2)
     dados['Media.Und TRI-202503'] = dados['Media.Und TRI-202503'].round(2)
-
+    dados['Media.Und TRI-202506'] = dados['Media.Und TRI-202506'].round(2)
+    dados['Media.Und TRI-202509'] = dados['Media.Und TRI-202509'].round(2)
+    dados['Media.Und TRI-202512'] = dados['Media.Und TRI-202512'].round(2)
     return dados
