@@ -9,7 +9,7 @@ def tratar_dados_iqvia(dados: pd.DataFrame) -> pd.DataFrame:
     logger = get_run_logger()
     try:
         with Halo(text="Tratando colunas", spinner='line'):
-            cols = [c for c in dados.columns if 'UNIDADES' in c]
+            cols = [c for c in dados.columns if 'UNIDADES' in c or 'RS' in c]
 
             for col in cols:
                 dados[col] = (

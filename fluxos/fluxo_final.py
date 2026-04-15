@@ -3,7 +3,7 @@ import pandas as pd
 from prefect import flow
 
 # Importações das tasks
-from tasks.arquivos.carregamento import carregar_dados
+from tasks.tasks_catalogo.carregamento import carregar_dados
 from tasks.tasks_resultado.classificar import flag
 from fluxos.fluxo_base import fluxo_base_final
 

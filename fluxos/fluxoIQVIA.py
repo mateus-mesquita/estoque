@@ -4,7 +4,7 @@ from halo import Halo
 from prefect import flow
 
 # Importações das tasks
-from tasks.arquivos.carregamento import carregar_dados
+from tasks.tasks_catalogo.carregamento import carregar_dados
 from tasks.tasks_iqvia.tratamento import tratar_dados_iqvia
 
 # Construnção do fluxo de IQVIA

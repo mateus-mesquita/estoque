@@ -4,9 +4,9 @@ from halo import Halo
 from prefect import flow
 
 # Importações das tasks
-from tasks.arquivos.carregamento import carregar_dados
-from tasks.arquivos.atualizar_valores import melhorar_valores
-from tasks.arquivos.criacao_col import criar_col_apresentcao
+from tasks.tasks_catalogo.carregamento import carregar_dados
+from tasks.tasks_catalogo.atualizar_valores import melhorar_valores
+from tasks.tasks_catalogo.criacao_col import criar_col_apresentcao
 
 # Construnção do fluxo de catálogo de produtos
 @flow(name ="Executando base de catálogo de produtos")

@@ -16,6 +16,3 @@ def carregar_dados(caminho:str) -> pd.DataFrame:
             logger.info(f"Carregando arquivo: {caminho} via leitor csv")
             dados = pd.read_csv(caminho, sep = ';')
             return dados
-        except Exception as e:
-            logger.error(f"Erro ao carregar arquivo: {caminho}")
-            raise Exception(f"Erro ao carregar arquivo: {caminho}")
