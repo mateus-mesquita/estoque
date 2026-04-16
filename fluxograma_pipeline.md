@@ -1,32 +1,30 @@
-# Diagrama do Fluxo de Dados
+# Diagrama do Fluxo de Dados (Pipeline de Estoque)
 
-Com base na sua documentação (`DOCUMENTACAO_PIPELINE.md`), eu construí este diagrama Mermaid ilustrando a arquitetura do seu fluxo no Prefect, mostrando desde o carregamento das origens de dados até a exportação final.
+Este diagrama representa a arquitetura atualizada do fluxo de dados orquestrado pelo Prefect, conforme definido em `fluxo_main.py`.
 
 ```mermaid
 graph TD
-    %% Definição de Estilos
+    %% Estilos
     classDef flow fill:#e1f5fe,stroke:#01579b,stroke-width:2px;
     classDef task fill:#fff3e0,stroke:#e65100,stroke-width:1px,color:#000;
     classDef source fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
     classDef output fill:#fce4ec,stroke:#880e4f,stroke-width:2px;
 
-    %% Fontes de Dados (Inputs)
-    Cat[("Planilha: Catálogo<br>(CATALOGO_DE_PRODUTOS)")]:::source
-    IQV[("Planilha: IQVIA<br>(12_IQVIADEZEMBRO)")]:::source
-    Est[("Planilha: Estoque<br>(dados_estoque_qualif)")]:::source
+    %% Fontes de Dados
+    Cat[("arquivos/CATALOGO_DE_PRODUTOS.xlsx")]:::source
+    IQV[("arquivos/12_IQVIADEZEMBRO2025CSV.csv")]:::source
 
-    %% Camada Inferior (Camada de Ingestão e Tratamento Primário)
-    subgraph FLUXO_CATALOGO ["1. fluxo_base_ctlg_prod"]
-        direction TB
+    %% Fluxo de Catálogo
+    subgraph FLUXO_CATALOGO ["fluxo_base_ctlg_prod"]
         C1(carregar_dados):::task
-        C2(melhorar_valores):::task
+        C2(dropna: EAN):::task
         C3(criar_col_apresentcao):::task
-        C4("dropna EAN"):::task
+        C4(melhorar_valores):::task
         C1 --> C2 --> C3 --> C4
     end
 
-    subgraph FLUXO_IQVIA ["2. fluxo_iqvia"]
-        direction TB
+    %% Fluxo IQVIA
+    subgraph FLUXO_IQVIA ["fluxo_iqvia"]
         I1(carregar_dados):::task
         I2(tratar_dados_iqvia):::task
         I1 --> I2
@@ -35,47 +33,37 @@ graph TD
     Cat --> C1
     IQV --> I1
 
-    %% Camada Intermediária (Cruzamento e Refino de Features)
-    subgraph FLUXO_BASE ["3. fluxo_base_final"]
-        direction TB
+    %% Fluxo Base
+    subgraph FLUXO_BASE ["fluxo_base_final"]
         B1(juntar_tabelas):::task
-        B2(selecao_features_e_cols):::task
+        B2(selecionar_cols):::task
+        B1 --> B2
     end
 
     C4 --> B1
     I2 --> B1
-    B1 --> B2
 
-    %% Camada Intermediária Alta (Integração com Estoque Real)
-    subgraph PLANILHA_FINAL ["4. PlanilhaFinal"]
+    %% Fluxo Principal (Métricas)
+    subgraph FLUXO_MAIN ["PlanilhaResultados (Entrypoint)"]
         direction TB
-        P1(carregar_dados - Estoque):::task
-        P2(flag: Estoque.qualif):::task
+        M1(faturamento2025NE):::task
+        M2(faturamento2025ME):::task
+        M3(performance_molecula_mercado):::task
+        M4(performance_molecula_apr_mercado):::task
+        M5(selecionar_cols: Limpeza Final):::task
+        
+        M1 --> M2 --> M3 --> M4 --> M5
     end
 
-    Est --> P1
-    B2 --> P2
-    P1 --> P2
+    B2 --> M1
 
-    %% Camada de Saída (Cálculos de Negócio e Exportação)
-    subgraph METRICAS ["5. TabelaFinal (Entrypoint)"]
-        direction TB
-        M1(media_trimestral):::task
-        M2(volume_bruto):::task
-        M3(selecionar_cols: remove colunas brutas):::task
-    end
-
-    P2 --> M1
-    M1 --> M2
-    M2 --> M3
-
-    %% Output Final
-    OUT[("Tabela Final Gerada<br>(teste.xlsx)")]:::output
-    M3 --> OUT
+    %% Saída
+    OUT[("resultados.xlsx")]:::output
+    M5 --> OUT
 ```
 
-### O que o diagrama demonstra:
-1. **Fontes de Dados (Verde):** A leitura das 3 planilhas principais de forma segmentada.
-2. **Pipelines / Flows (Caixas grandes):** Agrupamento que mostra como cada nível é isolado, mas alimenta o fluxo superior.
-3. **Tarefas (Laranja):** Detalhamento das funções atômicas gerenciadas pelas Flows em sua ordem respectiva.
-4. **Produto Final (Rosa):** Ponto de exportação para a planilha excel contendo as métricas trimestrais.
+### Explicação do Fluxo:
+1.  **Ingestão**: Os dados do Catálogo e da IQVIA são lidos e tratados em sub-fluxos isolados.
+2.  **Unificação**: O `fluxo_base_final` combina as fontes em um único DataFrame filtrado.
+3.  **Processamento de Negócio**: O fluxo principal (`PlanilhaResultados`) aplica as quatro tarefas de cálculo de performance e faturamento.
+4.  **Entrega**: O resultado é limpo de colunas temporárias e salvo como Excel.
