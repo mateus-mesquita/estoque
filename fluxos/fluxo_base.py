@@ -29,13 +29,14 @@ def fluxo_base_final(caminho_prod:str, caminho_iqvia:str) -> pd.DataFrame:
                                              'APP3_DESC','APP3_CODE','DESCRICAO_LONGA',
                                              'SEG_MKT_3','DATA_LANCAMENTO_APRESENTACAO',
                                              'CT2_CODE', 'CT2_DESC','CT2_DESC_LONGA','AREA_FARMACIA',
-                                             'CONCENTRACAO','VOLUME','QUANTIDADE_APRESENTACAO'
+                                             'CONCENTRACAO','VOLUME','QUANTIDADE_APRESENTACAO','MOLECULA',
+                                             'PACK'
                                              ])
     
     RC_LIST = [col for col in dados_iqvia.columns if 'TRIMOVEL' in col]
 
-    dados_iqvia = selecionar_cols(dados_iqvia,['FCC','PRODUCT_DESC','SEGMENTO_PROD',
-                                               'SETOR_NEC_ABERTO','MOLECULA','ATC1',
+    dados_iqvia = selecionar_cols(dados_iqvia,['FCC','SEGMENTO_PROD',
+                                               'SETOR_NEC_ABERTO','ATC1',
                                                'ATC2','ATC3','ATC4','NEC1','NEC2',
                                                'NEC3','NEC4','PACK_DESC','LABORATORIO']+RC_LIST)
     
