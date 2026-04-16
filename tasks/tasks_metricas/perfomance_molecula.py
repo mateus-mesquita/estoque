@@ -8,7 +8,7 @@ def performance_molecula_mercado(dados:pd.DataFrame) -> pd.DataFrame:
     dados = soma_ul_6_meses(dados)
 
     # Calculando a performance por molécula
-    dados['Performance Molecula ULT.6 meses - Mercado'] = dados.groupby('MOLECULA')['Soma ult.6 meses'].transform('sum')
+    dados['Perfomance Molécula (2025) - Mercado'] = dados.groupby(['UF','TIPO_FARMACIA','MOLECULA'])['Soma ult.6 meses'].transform('sum')
     return dados
 
 @task(name = "Calculando a performance por  Molécula e Apresentação a Nível mercado")
@@ -16,5 +16,5 @@ def performance_molecula_apr_mercado(dados:pd.DataFrame) -> pd.DataFrame:
     dados = soma_ul_6_meses(dados)
 
     # Calculando a performance por molécula
-    dados['Performance Molecula e Apresentação ULT.6 meses - Mercado'] = dados.groupby(['MOLECULA','apresentação'])['Soma ult.6 meses'].transform('sum')
+    dados['Performance Molecula e Apresentação (2025) - Mercado'] = dados.groupby(['UF','TIPO_FARMACIA','MOLECULA','apresentação'])['Soma ult.6 meses'].transform('sum')
     return dados

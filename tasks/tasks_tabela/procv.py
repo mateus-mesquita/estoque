@@ -7,7 +7,7 @@ from prefect import task, get_run_logger
 def juntar_tabelas(dados1:pd.DataFrame, dados2:pd.DataFrame) -> pd.DataFrame:
     logger = get_run_logger()
     try:
-        df = pd.merge(dados1,dados2,how="left",on='EAN')
+        df = pd.merge(dados1,dados2,how="right",on='EAN')
         return df
     except Exception as e:
         logger.error(f"Erro ao realizar junção de tabelas: {e}")
