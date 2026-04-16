@@ -1,8 +1,9 @@
 from fluxos.fluxo_base import fluxo_base_final
-from funcoes.funcoes_axiliares import calcular_soma_ne, calcular_soma_mercado, soma_ul_6_meses
-from prefect import task, flow
 from tasks.tasks_tabela.delete_cols import selecionar_cols
-import numpy as np
+from tasks.tasks_metricas.perfomance_mercado import faturamento2025ME
+from tasks.tasks_metricas.perfomance_ne import faturamento2025NE
+from tasks.tasks_metricas.perfomance_molecula import performance_molecula_apr_mercado, performance_molecula_mercado
+from prefect import flow
 import pandas as pd
 
 ## aplicando flow

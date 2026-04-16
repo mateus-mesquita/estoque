@@ -3,25 +3,15 @@ import pandas as pd
 # deve-se replicar a função da molécula para produto individualmente
 
 # aplicando criação de tabelas com métricas calculadas
-def calcular_soma_ne(row):
-    if row['UF'] in ('CE','PI','MA') and row['DISTRIBUIDOR'] == 'GRUPO_NORDESTE':
-        return (row['RS_PPP_202501']+row['RS_PPP_202502']+row['RS_PPP_202503']+
-                row['RS_PPP_202504']+row['RS_PPP_202504']+row['RS_PPP_202504']+
-                row['RS_PPP_202506']+row['RS_PPP_202507']+row['RS_PPP_202508']+
-                row['RS_PPP_202509']+row['RS_PPP_202510']+row['RS_PPP_202511']+
-                row['RS_PPP_202512'])
-    else:
-        return 0
+def calcular_soma_ne(dados:pd.DataFrame) -> pd.Series:
+    cols = [c for c in dados.columns if 'RS_PPP_2025' in c]
+    mask = (dados['UF'].isin(['CE','PI','MA'])) & (dados['DISTRIBUIDOR'] == 'GRUPO_NORDESTE')
+    return dados[cols].sum(axis=1) * mask
     
-def calcular_soma_mercado(row):
-    if row['UF'] in ('CE','PI','MA'):
-        return (row['RS_PPP_202501']+row['RS_PPP_202502']+row['RS_PPP_202503']+
-                row['RS_PPP_202504']+row['RS_PPP_202504']+row['RS_PPP_202504']+
-                row['RS_PPP_202506']+row['RS_PPP_202507']+row['RS_PPP_202508']+
-                row['RS_PPP_202509']+row['RS_PPP_202510']+row['RS_PPP_202511']+
-                row['RS_PPP_202512'])
-    else:
-        return 0
+def calcular_soma_mercado(dados:pd.DataFrame) -> pd.Series:
+    cols = [c for c in dados.columns if 'RS_PPP_2025' in c]
+    mask = dados['UF'].isin(['CE','PI','MA'])
+    return dados[cols].sum(axis=1) * mask
 
 # Calculando o faturamento da molécula
 def coletar_moleculas(dados:pd.DataFrame) -> pd.DataFrame:
@@ -30,10 +20,10 @@ def coletar_moleculas(dados:pd.DataFrame) -> pd.DataFrame:
 
 # Definindo funções de colunas
 def soma_ul_6_meses(dados:pd.DataFrame) -> pd.DataFrame:
-    dados['Soma ult.6 meses'] = (dados['RS_PPP_202501']+dados['RS_PPP_202502']+dados['RS_PPP_202503']+
-                dados['RS_PPP_202504']+dados['RS_PPP_202504']+dados['RS_PPP_202504']+
-                dados['RS_PPP_202506']+dados['RS_PPP_202507']+dados['RS_PPP_202508']+
-                dados['RS_PPP_202509']+dados['RS_PPP_202510']+dados['RS_PPP_202511']+
-                dados['RS_PPP_202512'])
+    # Identifica as colunas de faturamento dinamicamente
+    cols_faturamento = [c for c in dados.columns if 'RS_PPP_2025' in c]
+    
+    # Soma os valores tratando NaNs como 0, mas mantendo NaN se a linha toda for vazia
+    dados['Soma ult.6 meses'] = dados[cols_faturamento].sum(axis=1, min_count=1)
     
     return dados
